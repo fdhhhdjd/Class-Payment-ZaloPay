@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ZaloPay Sandbox Demo</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <main class="container">
+    <h1>ZaloPay Sandbox Demo</h1>
+
+    <div class="card">
+      <label>Số tiền (VND)</label>
+      <input id="amount" type="number" value="10000" />
+
+      <label>Mô tả</label>
+      <input id="description" type="text" value="Thanh toán demo" />
+
+      <label>Items (JSON array)</label>
+      <textarea id="items">[{"itemid":"sp01","itemname":"Demo product","itemprice":10000,"itemquantity":1}]</textarea>
+
+      <button id="payBtn">Thanh toán bằng ZaloPay (Sandbox)</button>
+    </div>
+    <pre id="debug" class="debug"></pre>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
