@@ -58,5 +58,5 @@ app.post("/status", async (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`✅ Server chạy tại: http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
