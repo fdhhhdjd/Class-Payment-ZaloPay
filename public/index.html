@@ -2,29 +2,70 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ZaloPay Sandbox Demo</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>ZaloPay Premium Demo - Code Web Không Khó</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-  <main class="container">
-    <h1>Payment ZaloPay Teacher Tài</h1>
+  <div class="container">
+    <header class="branding-header">
+      <div class="brand-left">
+        <div class="logo-wrapper">
+          <img src="/logo.jpg" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/50x50?text=CWKK'">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" class="verified-badge">
+        </div>
+        <div class="brand-text">
+          <span class="channel-name">Code Web Không Khó</span>
+          <span class="brand-tagline">Premium Gateway</span>
+        </div>
+      </div>
+      <div class="brand-right">
+        <div style="font-size: 0.7rem; font-weight: 800; color: #10b981; background: #ecfdf5; padding: 4px 12px; border-radius: 12px; border: 1px solid #d1fae5;">
+          SANDBOX
+        </div>
+      </div>
+    </header>
 
-    <div class="card">
-      <label>Số tiền (VND)</label>
-      <input id="amount" type="number" value="10000" />
+    <main class="card">
+      <h1 class="page-title">Thanh toán ZaloPay</h1>
 
-      <label>Mô tả</label>
-      <input id="description" type="text" value="Thanh toán demo" />
+      <div class="input-group">
+        <label>SỐ TIỀN THANH TOÁN</label>
+        <div style="position: relative;">
+          <input id="amount" class="input-field" type="text" inputmode="numeric" value="50,000" />
+          <span style="position: absolute; right: 18px; top: 50%; transform: translateY(-50%); font-weight: 800; color: #cbd5e1; font-size: 0.8rem;">VND</span>
+        </div>
+      </div>
 
-      <label>Items (JSON array)</label>
-      <textarea id="items">[{"itemid":"sp01","itemname":"Demo product","itemprice":10000,"itemquantity":1}]</textarea>
+      <div class="input-group">
+        <label>NỘI DUNG CHUYỂN KHOẢN</label>
+        <input id="description" class="input-field" type="text" placeholder="Nhập lời nhắn..." value="Đang ky khoa Code Web Khong Kho" />
+      </div>
 
-      <button id="payBtn">Thanh toán bằng ZaloPay (Sandbox)</button>
-    </div>
-    <pre id="debug" class="debug"></pre>
-  </main>
+      <div class="input-group">
+        <label>DỮ LIỆU ĐƠN HÀNG (JSON)</label>
+        <textarea id="items" class="input-field">[{"id":"cwkk_01","name":"Khóa học Next.js","price":50000,"qty":1}]</textarea>
+      </div>
+
+      <button id="payBtn" class="btn-pay">
+        <div class="loader"></div>
+        <span class="btn-text">Xác nhận thanh toán</span>
+      </button>
+      
+      <p id="status-text">Bảo mật bởi chuẩn ZaloPay kết nối trực tiếp</p>
+    </main>
+
+    <section class="debug-section">
+      <details class="debug-details">
+        <summary class="debug-summary">API RESPONSE LOGS</summary>
+        <div class="debug-content">
+          <pre id="debug">// Ready for payment...</pre>
+        </div>
+      </details>
+    </section>
+  </div>
 
   <script src="script.js"></script>
 </body>

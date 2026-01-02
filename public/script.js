@@ -1,66 +1,51 @@
-// public/script.js
 const payBtn = document.getElementById('payBtn');
-const debug = document.getElementById('debug');
 const amountInput = document.getElementById('amount');
-const descInput = document.getElementById('description');
-const itemsInput = document.getElementById('items');
+const statusText = document.getElementById('status-text');
+const debug = document.getElementById('debug');
 
-function showDebug(obj) {
-  debug.textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
-}
+// Tự động format tiền tệ cực mượt
+amountInput.addEventListener('input', (e) => {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value) {
+        e.target.value = parseInt(value, 10).toLocaleString('en-US');
+    }
+});
 
 payBtn.addEventListener('click', async () => {
-  const amount = Number(amountInput.value) || 10000;
-  const description = descInput.value.trim() || 'Thanh toán demo';
-  let items = [];
+    const rawAmount = amountInput.value.replace(/,/g, '');
+    const amount = Number(rawAmount);
+    
+    // Trạng thái Loading Premium
+    payBtn.classList.add('loading');
+    payBtn.disabled = true;
+    statusText.textContent = "⏳ Đang thiết lập kết nối an toàn...";
+    statusText.style.color = "#64748b";
 
-  try {
-    items = JSON.parse(itemsInput.value || '[]');
-    if (!Array.isArray(items)) throw new Error('Items phải là mảng');
-  } catch {
-    return showDebug({ error: '⚠️ Items phải là JSON hợp lệ (vd: [{"itemid":1,"itemname":"Sản phẩm A"}])' });
-  }
+    try {
+        const resp = await axios.post('https://98wsmh2j-3000.asse.devtunnels.ms/order', {
+            amount,
+            description: document.getElementById('description').value,
+            items: JSON.parse(document.getElementById('items').value)
+        });
 
-  const payload = { amount, description, items };
-  showDebug({ status: '⏳ Đang tạo đơn hàng...', payload });
-  payBtn.disabled = true;
+        debug.textContent = JSON.stringify(resp.data, null, 2);
 
-  try {
-    const resp = await axios.post('https://wjqv5wx6-3000.asse.devtunnels.ms/order', payload, { timeout: 15000 });
-    const data = resp.data;
-
-    if (!data) return showDebug('❌ Không có dữ liệu trả về từ server');
-
-    showDebug({ step: '📦 Kết quả từ server', data });
-
-    // ✅ Nếu backend đã trả sẵn order_url thì dùng luôn
-    if (data.order_url) {
-      showDebug({ info: '✅ Redirecting to ZaloPay...', order_url: data.order_url });
-      setTimeout(() => (window.location.href = data.order_url), 800);
-    } else if (data.return_code === 1) {
-      // Dự phòng: build thủ công khi backend chưa trả order_url
-      const token = data.zp_trans_token || data.zptranstoken;
-      const orderUrl = `https://qcgateway.zalopay.vn/openinapp?order=${encodeURIComponent(JSON.stringify({ zptranstoken: token, appid: 2554 }))}`;
-      showDebug({ info: '✅ Redirecting to ZaloPay (fallback)...', orderUrl });
-      setTimeout(() => (window.location.href = orderUrl), 800);
-    } else {
-      showDebug({
-        error: '❌ Tạo đơn thất bại',
-        reason: data.return_message || 'Không xác định',
-        data
-      });
+        if (resp.data.order_url) {
+            statusText.textContent = "✅ Đã tạo đơn! Đang chuyển hướng sang ZaloPay...";
+            statusText.style.color = "#10b981";
+            
+            // Delay nhẹ để người xem video thấy được thông báo thành công
+            setTimeout(() => {
+                window.location.href = resp.data.order_url;
+            }, 1200);
+        } else {
+            throw new Error("Không nhận được Order URL");
+        }
+    } catch (err) {
+        payBtn.classList.remove('loading');
+        payBtn.disabled = false;
+        statusText.textContent = "❌ Lỗi: " + (err.response?.data?.message || err.message);
+        statusText.style.color = "#ef4444";
+        debug.textContent = JSON.stringify(err.response?.data || err.message, null, 2);
     }
-  } catch (err) {
-    if (err.response) {
-      showDebug({
-        error: '❌ Lỗi từ server backend',
-        status: err.response.status,
-        body: err.response.data
-      });
-    } else {
-      showDebug({ error: '❌ Lỗi kết nối hoặc server không phản hồi', message: err.message });
-    }
-  } finally {
-    payBtn.disabled = false;
-  }
 });
